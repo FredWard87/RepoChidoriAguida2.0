@@ -11,6 +11,10 @@ const loginRoutes = require('./routes/loginRoutes');
 const datosRoutes = require('./routes/datosRoutes');
 const areasRoutes = require('./routes/areasRoutes');
 const programasRoutes = require('./routes/programaRoutes')
+const authRoutes = require('./routes/authRoutes'); // Importa la nueva ruta
+
+
+
 
 
 const app = express();
@@ -36,10 +40,13 @@ app.use((req, res, next) => {
 
 // Configura las rutas
 app.use('/usuarios', usuariosRouter); 
-app.use('/', loginRoutes); 
+app.use('/', loginRoutes);  // Cambio realizado aquí
 app.use('/datos', datosRoutes);
 app.use('/programas', programasRoutes); 
 app.use('/areas', areasRoutes);
+app.use('/auth', authRoutes); // Usa la nueva ruta para la autenticación
+
+
 
 // Catch 404 and forward to error handler
 app.use(function(req, res, next) {
