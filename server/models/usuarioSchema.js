@@ -30,9 +30,16 @@ const UsuariosSchema = new mongoose.Schema({
 // Hash de la contraseña antes de guardar
 UsuariosSchema.pre('save', async function (next) {
   if (this.isModified('Contraseña')) {
-    this.Contraseña = await bcrypt.hash(this.Contraseña, 10);
+    try {
+      const salt = await bcrypt.genSalt(10);
+      this.Contraseña = await bcrypt.hash(this.Contraseña, salt);
+      next();
+    } catch (error) {
+      next(error);
+    }
+  } else {
+    next();
   }
-  next();
 });
 
 // Métodos para verificar la contraseña

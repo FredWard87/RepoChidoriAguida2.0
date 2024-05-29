@@ -1,12 +1,16 @@
 // App.js
-import React from "react";
+import React, { createContext } from 'react';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Login from "./components/Login/loginForm" // Importa el componente de inicio de sesión
 import Inicio from './components/Home/inicio';
+import AuthProvider from './routes/authProvider';
+
+export const UserContext = createContext(null);
 
 
 function App() {
   return (
+    <AuthProvider>
     <div className="App">
       <Router>
         <Routes>
@@ -18,7 +22,10 @@ function App() {
         </Routes>
       </Router>
     </div>
+    </AuthProvider>
+
   );
 }
 
 export default App;
+
