@@ -1,16 +1,38 @@
 const Usuarios = require('../models/usuarioSchema');
+const transporter = require('../emailconfig');
+
 
 // Controlador para registrar un nuevo usuario
 const registroUsuario = async (req, res) => {
   try {
     const nuevoUsuario = new Usuarios(req.body);
     await nuevoUsuario.save();
+
+    // Enviar correo electrónico si el nuevo usuario es un auditor
+    if (nuevoUsuario.TipoUsuario === 'auditor') {
+      const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: nuevoUsuario.Correo,
+        subject: 'Bienvenido al equipo de auditores',
+        text: `Hola ${nuevoUsuario.Nombre},\n\nBienvenido al equipo de auditores. Nos alegra tenerte con nosotros.\n\nSaludos,\nEl equipo de la empresa`,
+      };
+
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.error('Error al enviar el correo electrónico:', error);
+        } else {
+          console.log('Correo electrónico enviado:', info.response);
+        }
+      });
+    }
+
     res.status(201).json({ message: 'Usuario registrado exitosamente' });
   } catch (error) {
     console.error('Error al registrar el usuario:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
+
 
 // Controlador para obtener todos los usuarios
 const obtenerUsuarios = async (req, res) => {

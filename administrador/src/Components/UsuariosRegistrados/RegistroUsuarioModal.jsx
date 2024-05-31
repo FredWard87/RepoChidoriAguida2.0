@@ -23,7 +23,8 @@ const RegistroUsuarioModal = ({ show, handleClose }) => {
     ConfirmarContraseña: '',
     Puesto: '',
     FechaIngreso: '',
-    Escolaridad: '',
+    Escolaridad: 'Profesional',
+    Carrera: '',
     TipoUsuario: 'auditor',
     AñosExperiencia: ''
   });
@@ -98,9 +99,18 @@ const RegistroUsuarioModal = ({ show, handleClose }) => {
             <input type="date" name="FechaIngreso" value={formData.FechaIngreso} onChange={handleChange} required />
           </div>
           <div className="form-group">
-            <label>Escolaridad:</label>
-            <input type="text" name="Escolaridad" value={formData.Escolaridad} onChange={handleChange} required />
-          </div>
+          <label>Escolaridad:</label>
+          <select name="Escolaridad" value={formData.Escolaridad} onChange={handleChange} required>
+            <option value="Profesional">Profesional</option>
+            <option value="Preparatoria">Preparatoria</option>
+            <option value="Secundaria">Secundaria</option>
+            <option value="No cuenta con estudios">No cuenta con estudios</option>
+          </select>
+        </div>
+          <div className="form-group">
+  <label>Carrera:</label>
+  <input type="text" name="Carrera" value={formData.Carrera} onChange={handleChange} required />
+</div>
           <div className="form-group">
             <label>Años de Experiencia:</label>
             <input type="number" name="AñosExperiencia" value={formData.AñosExperiencia} onChange={handleChange} required />
