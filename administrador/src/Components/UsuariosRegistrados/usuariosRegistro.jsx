@@ -7,6 +7,11 @@ import { format } from 'date-fns';
 import RegistroUsuarioModal from './RegistroUsuarioModal';
 import CalificacionModal from './CalificacionModal';
 const UsuariosRegistro = () => {
+  const predefinedAreas = [
+      'Calidad', 'Mantenimiento', 'Planta', 'Sistema de Gestión de Calidad e Inocuidad', 
+      'Almacenes', 'preparación', 'envasado y embalaje', 'Proceso de Producción', 
+      'Aseguramiento de Calidad', 'Áreas de Proceso', 'SGCI Envasadora Aguida'
+    ];
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -21,6 +26,8 @@ const UsuariosRegistro = () => {
     Puesto: '',
     FechaIngreso: '',
     Escolaridad: '',
+    Área: null, // Cambiado de '' a null
+    customArea: '', // Agrega esta línea
     //cosa movida carrera
     Carrera:'',
     AñosExperiencia: '',
@@ -69,6 +76,8 @@ const UsuariosRegistro = () => {
     return yearsInCompany;
   };
 
+//modifique el HadleEditClick
+
   const handleEditClick = (usuario) => {
     const formattedFechaIngreso = usuario.FechaIngreso ? new Date(usuario.FechaIngreso).toISOString().split('T')[0] : '';
     setUsuarioAEditar(usuario);
@@ -81,6 +90,7 @@ const UsuariosRegistro = () => {
       Escolaridad: usuario.Escolaridad || '',
       //cosa movida carrera
       Carrera: usuario.Carrera || '',
+      Área: usuario.Área || '',
       AñosExperiencia: usuario.AñosExperiencia || '',
       FormaParteEquipoInocuidad: usuario.FormaParteEquipoInocuidad || false,
       PuntuacionEspecialidad : usuario.PuntuacionEspecialidad || '',
@@ -88,12 +98,15 @@ const UsuariosRegistro = () => {
     });
     setShowEditModal(true);
   };
+  
 
   const handleAgregarCalificaciones = (usuario) => {
     setUsuarioAEditar(usuario);
     setShowCalificacionModal(true);
   };
 
+
+ 
   const handleGuardarCalificaciones = (calificaciones) => {
     if (!usuarioAEditar || !calificaciones || calificaciones.length === 0) {
       console.error("Usuario o calificaciones inválidas");
@@ -115,29 +128,55 @@ const UsuariosRegistro = () => {
         console.error('Error al actualizar las calificaciones:', error);
       });
   };
-  
+  const [customArea, setCustomArea] = useState('');
+
+
+  //Modifique el EditFormChange
 
   const handleEditFormChange = (e, value) => {
     const { name } = e.target;
     const newValue = e.target.type === 'checkbox' ? value : e.target.value;
-    setEditFormData({ ...editFormData, [name]: newValue });
+    if (name === 'Área') {
+      setEditFormData(prevState => ({
+        ...prevState,
+        [name]: newValue
+      }));
+      if (newValue !== 'custom') {
+        setCustomArea(''); // Reinicia customArea si no es 'custom'
+      }
+    } else {
+      setEditFormData(prevState => ({
+        ...prevState,
+        [name]: newValue
+      }));
+      if (name === 'customArea') {
+        setCustomArea(newValue); // Actualiza customArea directamente
+      }
+    }
   };
+  
+
+//modifique el HadleEditSubit
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();
-
+  
     const fechaIngresoDate = new Date(editFormData.FechaIngreso);
     const currentDate = new Date();
-
+  
     if (fechaIngresoDate > currentDate) {
       setEditFormError('La fecha de ingreso no puede ser mayor a la fecha actual.');
       return;
     } else {
       setEditFormError('');
     }
-
+  
     try {
-      const response = await axios.put(`${process.env.REACT_APP_BACKEND_URL}/usuarios/${usuarioAEditar._id}`, editFormData);
+      const updatedFormData = { ...editFormData }; // Copia de los datos del formulario
+      if (editFormData.Área === 'custom') {
+        updatedFormData.Área = customArea; // Reemplaza 'custom' con el valor de customArea
+      }
+      const response = await axios.put(`${process.env.REACT_APP_BACKEND_URL}/usuarios/${usuarioAEditar._id}`, updatedFormData);
       setUsers(users.map(user => (user._id === usuarioAEditar._id ? response.data : user)));
       setShowEditModal(false);
       setUsuarioAEditar(null);
@@ -146,6 +185,7 @@ const UsuariosRegistro = () => {
       console.error('Error al actualizar el usuario:', error);
     }
   };
+  
 
   const handleCloseEditModal = () => {
     setShowEditModal(false);
@@ -217,11 +257,6 @@ const UsuariosRegistro = () => {
             <option value="auditor">Auditor</option>
             <option value="Administrador">Administrador</option>
           </select>
-
-
-
-
-
           <select value={filtroEscolaridad} onChange={(e) => setFiltroEscolaridad(e.target.value)}>
             <option value="">Escolaridad</option>
             <option value="Profesional">Profesional</option>
@@ -229,10 +264,6 @@ const UsuariosRegistro = () => {
             <option value="Secundaria">Secundaria</option>
             <option value="Sin estudios">Sin estudios</option>
           </select>
-
-
-
-
           <select value={filtroInocuidad} onChange={(e) => setFiltroInocuidad(e.target.value)}>
             <option value="">Inocuidad</option>
             <option value="true">Sí</option>
@@ -301,6 +332,46 @@ const UsuariosRegistro = () => {
                     onChange={handleEditFormChange}
                   />
                 </div>
+
+
+
+
+
+
+
+               <div className="form-group">
+                <label>Área:</label>
+                <select name="Área" value={editFormData.Área || ''} onChange={handleEditFormChange} required>
+                  <option value="">Seleccione un área</option>
+                  {predefinedAreas.map((area) => (
+                    <option key={area} value={area}>
+                      {area}
+                    </option>
+                  ))}
+                  <option value="custom">Otra</option>
+                </select>
+                {editFormData.Área === 'custom' && (
+                  <div className="form-group">
+                    <label>Área Personalizada:</label>
+                    <input
+                      type="text"
+                      name="customArea"
+                      value={customArea}
+                      onChange={handleEditFormChange}
+                      placeholder="Ingrese un área personalizada"
+                      required
+                    />
+                  </div>
+                )}
+              </div>
+
+
+
+
+
+
+
+
                 {(usuarioAEditar.TipoUsuario === 'auditor' || usuarioAEditar.TipoUsuario === 'Administrador' || usuarioAEditar.TipoUsuario === 'empleado') && (
                   <>
                     <div className="form-group">
@@ -321,12 +392,6 @@ const UsuariosRegistro = () => {
                         onChange={handleEditFormChange}
                       />
                     </div>
-                    
-
-
-
-
-
                     <div className="form-group">
                     <label>
                 Escolaridad:
@@ -345,12 +410,6 @@ const UsuariosRegistro = () => {
                         onChange={handleEditFormChange}
                       />
                     </div>
-
-
-
-
-
-
                     <div className="form-group">
                    <label>Carrera:</label>
                     <input
@@ -409,6 +468,7 @@ const UserCard = ({ user, formatDate, calculateYearsInCompany, onEditClick, onDe
       <p><strong>Correo:</strong> {user.Correo}</p>
       <p><strong>Tipo de usuario:</strong> {user.TipoUsuario}</p>
       <p><strong>Puesto:</strong> {user.Puesto}</p>
+      <p><strong>Área:</strong> {user.Área}</p> {/* Línea agregada */}
       {(user.TipoUsuario === 'auditor' || user.TipoUsuario === 'Administrador'|| user.TipoUsuario === 'empleado') && (
         <>
           {user.FechaIngreso && (
@@ -416,15 +476,7 @@ const UserCard = ({ user, formatDate, calculateYearsInCompany, onEditClick, onDe
           )}
           <p><strong>Años en la Empresa:</strong> {calculateYearsInCompany(user.FechaIngreso)}</p>
           <p><strong>Escolaridad:</strong> {user.Escolaridad}</p>
-          
-
-
           <p><strong>Carrera:</strong> {user.Carrera}</p>
-
-
-
-
-          
           <p><strong>Años de Experiencia:</strong> {user.AñosExperiencia}</p>
           <p><strong>Puntuación Especialidad:</strong> {user.PuntuacionEspecialidad}</p>
           <p><strong>Forma Parte del Equipo de Inocuidad:</strong> {user.FormaParteEquipoInocuidad ? 'Sí' : 'No'}</p>
