@@ -69,6 +69,7 @@ function DrawerList({ confirmLogout }) {
     { text: "Inicio", href: "/home"},
     { text: "Registro Y visualización de usuarios", href: "/usuariosRegistrados"},
     { text: "Programa", href: "/programa" },
+    { text: "Evaluación", href: "/calificaciones" },
     { text: "Auditorias", subItems: [
         { text: "Generar auditoria", href: "/datos" },
         { text: "Revicion de auditoria", href: "/" },

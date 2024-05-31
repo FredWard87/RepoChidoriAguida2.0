@@ -14,6 +14,7 @@ const UsuariosSchema = new mongoose.Schema({
   Puesto: { type: String, required: function () { return this.TipoUsuario === 'auditor'; } },
   FechaIngreso: { type: Date, required: function () { return this.TipoUsuario === 'auditor'; } },
   Escolaridad: { type: String, required: function () { return this.TipoUsuario === 'auditor'; } },
+  Carrera: { type: String, required: function () { return this.TipoUsuario === 'auditor'; } },
   TipoUsuario: { type: String, required: true },
   PromedioEvaluacion: { type: Number, default: 0 },
   PuntuacionEspecialidad: { type: Number, default: 0 },

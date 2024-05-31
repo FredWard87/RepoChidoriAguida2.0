@@ -6,7 +6,6 @@ import './css/editForm.css';
 import { format } from 'date-fns';
 import RegistroUsuarioModal from './RegistroUsuarioModal';
 import CalificacionModal from './CalificacionModal';
-
 const UsuariosRegistro = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -22,6 +21,8 @@ const UsuariosRegistro = () => {
     Puesto: '',
     FechaIngreso: '',
     Escolaridad: '',
+    //cosa movida carrera
+    Carrera:'',
     AñosExperiencia: '',
     FormaParteEquipoInocuidad: false,
     calificaciones: [] // Inicializar como un array vacío
@@ -30,6 +31,10 @@ const UsuariosRegistro = () => {
   const [filtroTipoUsuario, setFiltroTipoUsuario] = useState('');
   const [filtroInocuidad, setFiltroInocuidad] = useState('');
   const [filtroAprobado, setFiltroAprobado] = useState('');
+
+  //cosa movida
+  const [filtroEscolaridad, setFiltroEscolaridad] = useState('');
+
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -74,8 +79,11 @@ const UsuariosRegistro = () => {
       Puesto: usuario.Puesto || '',
       FechaIngreso: formattedFechaIngreso,
       Escolaridad: usuario.Escolaridad || '',
+      //cosa movida carrera
+      Carrera: usuario.Carrera || '',
       AñosExperiencia: usuario.AñosExperiencia || '',
       FormaParteEquipoInocuidad: usuario.FormaParteEquipoInocuidad || false,
+      PuntuacionEspecialidad : usuario.PuntuacionEspecialidad || '',
       calificaciones: usuario.calificaciones || []
     });
     setShowEditModal(true);
@@ -105,7 +113,6 @@ const UsuariosRegistro = () => {
       })
       .catch(error => {
         console.error('Error al actualizar las calificaciones:', error);
-        // Manejar el error adecuadamente y proporcionar retroalimentación al usuario si es necesario
       });
   };
   
@@ -186,18 +193,17 @@ const UsuariosRegistro = () => {
     }
   };
 
-  
   const filteredUsers = users.filter(user => {
     return (
       (filtroTipoUsuario === '' || user.TipoUsuario === filtroTipoUsuario) &&
       (filtroInocuidad === '' || user.FormaParteEquipoInocuidad.toString() === filtroInocuidad) &&
-      (filtroAprobado === '' || user.Aprobado.toString() === filtroAprobado)
+      (filtroAprobado === '' || user.Aprobado.toString() === filtroAprobado) &&
+      //cosas movidad, escolaridad
+      (filtroEscolaridad === '' || user.Escolaridad.toString() === filtroEscolaridad)
     );
   });
-
   if (loading) return <p>Cargando usuarios...</p>;
   if (error) return <p>{error}</p>;
-
   return (
     <div>
       <Navbar />
@@ -211,6 +217,22 @@ const UsuariosRegistro = () => {
             <option value="auditor">Auditor</option>
             <option value="Administrador">Administrador</option>
           </select>
+
+
+
+
+
+          <select value={filtroEscolaridad} onChange={(e) => setFiltroEscolaridad(e.target.value)}>
+            <option value="">Escolaridad</option>
+            <option value="Profesional">Profesional</option>
+            <option value="Preparatoria">Preparatoria</option>
+            <option value="Secundaria">Secundaria</option>
+            <option value="Sin estudios">Sin estudios</option>
+          </select>
+
+
+
+
           <select value={filtroInocuidad} onChange={(e) => setFiltroInocuidad(e.target.value)}>
             <option value="">Inocuidad</option>
             <option value="true">Sí</option>
@@ -249,7 +271,7 @@ const UsuariosRegistro = () => {
         />
         {showEditModal && (
           <div className="modal">
-            <div className="modal-content edit-modal-content">
+            <div className="modal-content edit-modal-content" style={{ overflowY: 'scroll' }}>
               <span className="close" onClick={handleCloseEditModal}>&times;</span>
               <form onSubmit={handleEditSubmit} className="edit-form">
                 <div className="form-group">
@@ -299,15 +321,45 @@ const UsuariosRegistro = () => {
                         onChange={handleEditFormChange}
                       />
                     </div>
+                    
+
+
+
+
+
                     <div className="form-group">
-                      <label>Escolaridad:</label>
-                      <input
+                    <label>
+                Escolaridad:
+                <select name="Escolaridad" value={editFormData.Escolaridad} onChange={handleEditFormChange} required>
+                  <option value="">Seleccione una opción</option>
+                  <option value="Profesional">Profesional</option>
+                  <option value="Preparatoria">Preparatoria</option>
+                  <option value="Secundaria">Secundaria</option>
+                  <option value="Sin estudios">Sin estudios</option>
+                </select>
+              </label>         
+                        <input
                         type="text"
                         name="Escolaridad"
                         value={editFormData.Escolaridad}
                         onChange={handleEditFormChange}
                       />
                     </div>
+
+
+
+
+
+
+                    <div className="form-group">
+                   <label>Carrera:</label>
+                    <input
+                      type="text"
+                      name="Carrera"
+                      value={editFormData.Carrera}
+                      onChange={handleEditFormChange}
+                    />
+                  </div>
                     <div className="form-group">
                       <label>Años de Experiencia:</label>
                       <input
@@ -351,7 +403,6 @@ const UsuariosRegistro = () => {
 
 const UserCard = ({ user, formatDate, calculateYearsInCompany, onEditClick, onDeleteClick, onDegradarClick, onPromocionarClick, onAgregarCalificaciones }) => {
   const [showCalificaciones, setShowCalificaciones] = useState(false);
-
   return (
     <div className="card">
       <h3>{user.Nombre}</h3>
@@ -365,6 +416,15 @@ const UserCard = ({ user, formatDate, calculateYearsInCompany, onEditClick, onDe
           )}
           <p><strong>Años en la Empresa:</strong> {calculateYearsInCompany(user.FechaIngreso)}</p>
           <p><strong>Escolaridad:</strong> {user.Escolaridad}</p>
+          
+
+
+          <p><strong>Carrera:</strong> {user.Carrera}</p>
+
+
+
+
+          
           <p><strong>Años de Experiencia:</strong> {user.AñosExperiencia}</p>
           <p><strong>Puntuación Especialidad:</strong> {user.PuntuacionEspecialidad}</p>
           <p><strong>Forma Parte del Equipo de Inocuidad:</strong> {user.FormaParteEquipoInocuidad ? 'Sí' : 'No'}</p>
@@ -373,19 +433,16 @@ const UserCard = ({ user, formatDate, calculateYearsInCompany, onEditClick, onDe
           <button className="editar" onClick={() => onEditClick(user)}>Editar</button>
           <button onClick={() => onDeleteClick(user._id)}>Eliminar</button>
           <button onClick={onAgregarCalificaciones}>Agregar Calificaciones</button>
-
           {(user.TipoUsuario === 'empleado') && (
             <>
               {(user.PromedioEvaluacion >= 80) && <button onClick={() => onPromocionarClick(user._id)}>Promocionar</button>}
             </>
           )}
-
           {(user.TipoUsuario === 'auditor') && (
             <>
               {(user.PromedioEvaluacion <= 79 ) && <button onClick={() => onDegradarClick(user._id)}>Degradar</button>}
             </>
           )}
-
           <div className="accordion">
             <button onClick={() => setShowCalificaciones(!showCalificaciones)}>
               Ver Calificaciones
@@ -416,7 +473,5 @@ const UserCard = ({ user, formatDate, calculateYearsInCompany, onEditClick, onDe
     </div>
   );
 };
-
-
 
 export default UsuariosRegistro;
