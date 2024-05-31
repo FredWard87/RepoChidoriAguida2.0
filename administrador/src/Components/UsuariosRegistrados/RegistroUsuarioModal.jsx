@@ -26,11 +26,19 @@ const RegistroUsuarioModal = ({ show, handleClose }) => {
     Escolaridad: 'Profesional',
     Carrera: '',
     TipoUsuario: 'auditor',
-    AñosExperiencia: ''
+    AñosExperiencia: '',
+    Área: '',
+    customArea: ''
   });
 
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+
+  const predefinedAreas = [
+    'Calidad', 'Mantenimiento', 'Planta', 'Sistema de Gestión de Calidad e Inocuidad', 
+    'Almacenes', 'preparación', 'envasado y embalaje', 'Proceso de Producción', 
+    'Aseguramiento de Calidad', 'Áreas de Proceso', 'SGCI Envasadora Aguida'
+  ];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -47,7 +55,7 @@ const RegistroUsuarioModal = ({ show, handleClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { Contraseña, ConfirmarContraseña } = formData;
+    const { Contraseña, ConfirmarContraseña, customArea } = formData;
 
     if (!validatePassword(Contraseña)) {
       setError('La contraseña debe tener exactamente 8 caracteres y al menos un número.');
@@ -61,8 +69,13 @@ const RegistroUsuarioModal = ({ show, handleClose }) => {
 
     setError('');
 
+    const data = { ...formData };
+    if (customArea) {
+      data.Área = customArea;
+    }
+
     try {
-      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/usuarios`, formData);
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/usuarios`, data);
       alert("Usuario registrado con éxito");
       console.log(response.data);
 
@@ -76,7 +89,9 @@ const RegistroUsuarioModal = ({ show, handleClose }) => {
         FechaIngreso: '',
         Escolaridad: '',
         TipoUsuario: 'auditor',
-        AñosExperiencia: ''
+        AñosExperiencia: '',
+        Área: '',
+        customArea: ''
       });
 
       // Cerrar el modal después de registrar el usuario
@@ -99,18 +114,18 @@ const RegistroUsuarioModal = ({ show, handleClose }) => {
             <input type="date" name="FechaIngreso" value={formData.FechaIngreso} onChange={handleChange} required />
           </div>
           <div className="form-group">
-          <label>Escolaridad:</label>
-          <select name="Escolaridad" value={formData.Escolaridad} onChange={handleChange} required>
-            <option value="Profesional">Profesional</option>
-            <option value="Preparatoria">Preparatoria</option>
-            <option value="Secundaria">Secundaria</option>
-            <option value="No cuenta con estudios">No cuenta con estudios</option>
-          </select>
-        </div>
+            <label>Escolaridad:</label>
+            <select name="Escolaridad" value={formData.Escolaridad} onChange={handleChange} required>
+              <option value="Profesional">Profesional</option>
+              <option value="Preparatoria">Preparatoria</option>
+              <option value="Secundaria">Secundaria</option>
+              <option value="No cuenta con estudios">No cuenta con estudios</option>
+            </select>
+          </div>
           <div className="form-group">
-  <label>Carrera:</label>
-  <input type="text" name="Carrera" value={formData.Carrera} onChange={handleChange} required />
-</div>
+            <label>Carrera:</label>
+            <input type="text" name="Carrera" value={formData.Carrera} onChange={handleChange} required />
+          </div>
           <div className="form-group">
             <label>Años de Experiencia:</label>
             <input type="number" name="AñosExperiencia" value={formData.AñosExperiencia} onChange={handleChange} required />
@@ -170,6 +185,28 @@ const RegistroUsuarioModal = ({ show, handleClose }) => {
           <button type="button" onClick={() => setShowPassword(!showPassword)}>
             {showPassword ? 'Ocultar' : 'Mostrar'}
           </button>
+        </div>
+        <div className="form-group">
+          <label>Área:</label>
+          <select name="Área" value={formData.Área} onChange={handleChange} required>
+            <option value="">Seleccione un área</option>
+            {predefinedAreas.map((area) => (
+              <option key={area} value={area}>
+                {area}
+              </option>
+            ))}
+            <option value="custom">Otra</option>
+          </select>
+          {formData.Área === 'custom' && (
+            <input
+              type="text"
+              name="customArea"
+              value={formData.customArea}
+              onChange={handleChange}
+              placeholder="Ingrese un área personalizada"
+              required
+            />
+          )}
         </div>
         {renderAdditionalFields()}
         <div className="modal-buttons">
