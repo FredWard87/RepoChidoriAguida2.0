@@ -7,11 +7,6 @@ import { format } from 'date-fns';
 import RegistroUsuarioModal from './RegistroUsuarioModal';
 import CalificacionModal from './CalificacionModal';
 const UsuariosRegistro = () => {
-  const predefinedAreas = [
-      'Calidad', 'Mantenimiento', 'Planta', 'Sistema de Gestión de Calidad e Inocuidad', 
-      'Almacenes', 'preparación', 'envasado y embalaje', 'Proceso de Producción', 
-      'Aseguramiento de Calidad', 'Áreas de Proceso', 'SGCI Envasadora Aguida'
-    ];
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -26,8 +21,7 @@ const UsuariosRegistro = () => {
     Puesto: '',
     FechaIngreso: '',
     Escolaridad: '',
-    Área: null, // Cambiado de '' a null
-    customArea: '', // Agrega esta línea
+    Departamento:'',
     //cosa movida carrera
     Carrera:'',
     AñosExperiencia: '',
@@ -90,7 +84,7 @@ const UsuariosRegistro = () => {
       Escolaridad: usuario.Escolaridad || '',
       //cosa movida carrera
       Carrera: usuario.Carrera || '',
-      Área: usuario.Área || '',
+      Departamento: usuario.Departamento || '',
       AñosExperiencia: usuario.AñosExperiencia || '',
       FormaParteEquipoInocuidad: usuario.FormaParteEquipoInocuidad || false,
       PuntuacionEspecialidad : usuario.PuntuacionEspecialidad || '',
@@ -259,10 +253,9 @@ const UsuariosRegistro = () => {
           </select>
           <select value={filtroEscolaridad} onChange={(e) => setFiltroEscolaridad(e.target.value)}>
             <option value="">Escolaridad</option>
+            <option value="TSU">TSU</option>
             <option value="Profesional">Profesional</option>
             <option value="Preparatoria">Preparatoria</option>
-            <option value="Secundaria">Secundaria</option>
-            <option value="Sin estudios">Sin estudios</option>
           </select>
           <select value={filtroInocuidad} onChange={(e) => setFiltroInocuidad(e.target.value)}>
             <option value="">Inocuidad</option>
@@ -339,31 +332,6 @@ const UsuariosRegistro = () => {
 
 
 
-               <div className="form-group">
-                <label>Área:</label>
-                <select name="Área" value={editFormData.Área || ''} onChange={handleEditFormChange} required>
-                  <option value="">Seleccione un área</option>
-                  {predefinedAreas.map((area) => (
-                    <option key={area} value={area}>
-                      {area}
-                    </option>
-                  ))}
-                  <option value="custom">Otra</option>
-                </select>
-                {editFormData.Área === 'custom' && (
-                  <div className="form-group">
-                    <label>Área Personalizada:</label>
-                    <input
-                      type="text"
-                      name="customArea"
-                      value={customArea}
-                      onChange={handleEditFormChange}
-                      placeholder="Ingrese un área personalizada"
-                      required
-                    />
-                  </div>
-                )}
-              </div>
 
 
 
@@ -397,10 +365,9 @@ const UsuariosRegistro = () => {
                 Escolaridad:
                 <select name="Escolaridad" value={editFormData.Escolaridad} onChange={handleEditFormChange} required>
                   <option value="">Seleccione una opción</option>
+                  <option value="TSU">TSU</option>
                   <option value="Profesional">Profesional</option>
                   <option value="Preparatoria">Preparatoria</option>
-                  <option value="Secundaria">Secundaria</option>
-                  <option value="Sin estudios">Sin estudios</option>
                 </select>
               </label>         
                         <input
@@ -468,7 +435,6 @@ const UserCard = ({ user, formatDate, calculateYearsInCompany, onEditClick, onDe
       <p><strong>Correo:</strong> {user.Correo}</p>
       <p><strong>Tipo de usuario:</strong> {user.TipoUsuario}</p>
       <p><strong>Puesto:</strong> {user.Puesto}</p>
-      <p><strong>Área:</strong> {user.Área}</p> {/* Línea agregada */}
       {(user.TipoUsuario === 'auditor' || user.TipoUsuario === 'Administrador'|| user.TipoUsuario === 'empleado') && (
         <>
           {user.FechaIngreso && (

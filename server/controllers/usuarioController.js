@@ -33,7 +33,20 @@ const registroUsuario = async (req, res) => {
   }
 };
 
-
+// Controlador para obtener un usuario por su nombre
+const obtenerUsuarioPorNombre = async (req, res) => {
+  try {
+    const nombreUsuario = req.params.nombre;
+    const usuario = await Usuarios.findOne({ Nombre: nombreUsuario });
+    if (!usuario) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+    res.json(usuario);
+  } catch (error) {
+    console.error('Error al obtener el usuario por nombre:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+ }
+};
 // Controlador para obtener todos los usuarios
 const obtenerUsuarios = async (req, res) => {
   try {
@@ -107,5 +120,6 @@ module.exports = {
   obtenerUsuarios,
   obtenerUsuarioPorId,
   actualizarUsuario,
-  eliminarUsuario
+  eliminarUsuario,
+  obtenerUsuarioPorNombre
 };

@@ -23,22 +23,16 @@ const RegistroUsuarioModal = ({ show, handleClose }) => {
     ConfirmarContraseña: '',
     Puesto: '',
     FechaIngreso: '',
-    Escolaridad: 'Profesional',
+    Escolaridad: 'TSU',
     Carrera: '',
     TipoUsuario: 'auditor',
     AñosExperiencia: '',
-    Área: '',
-    customArea: ''
+    Departamento: '',
+    customDepartamento: ''
   });
 
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-
-  const predefinedAreas = [
-    'Calidad', 'Mantenimiento', 'Planta', 'Sistema de Gestión de Calidad e Inocuidad', 
-    'Almacenes', 'preparación', 'envasado y embalaje', 'Proceso de Producción', 
-    'Aseguramiento de Calidad', 'Áreas de Proceso', 'SGCI Envasadora Aguida'
-  ];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -55,7 +49,7 @@ const RegistroUsuarioModal = ({ show, handleClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { Contraseña, ConfirmarContraseña, customArea } = formData;
+    const { Contraseña, ConfirmarContraseña, customDepartamento, Departamento } = formData;
 
     if (!validatePassword(Contraseña)) {
       setError('La contraseña debe tener exactamente 8 caracteres y al menos un número.');
@@ -70,8 +64,8 @@ const RegistroUsuarioModal = ({ show, handleClose }) => {
     setError('');
 
     const data = { ...formData };
-    if (customArea) {
-      data.Área = customArea;
+    if (Departamento === 'otro') {
+      data.Departamento = customDepartamento;
     }
 
     try {
@@ -79,7 +73,6 @@ const RegistroUsuarioModal = ({ show, handleClose }) => {
       alert("Usuario registrado con éxito");
       console.log(response.data);
 
-      // Limpiar los campos del formulario después de agregar un usuario exitosamente
       setFormData({
         Nombre: '',
         Correo: '',
@@ -90,14 +83,12 @@ const RegistroUsuarioModal = ({ show, handleClose }) => {
         Escolaridad: '',
         TipoUsuario: 'auditor',
         AñosExperiencia: '',
-        Área: '',
-        customArea: ''
+        Departamento: '',
+        customDepartamento: ''
       });
 
-      // Cerrar el modal después de registrar el usuario
       handleClose();
 
-      // Actualizar automáticamente la página
       window.location.reload();
     } catch (error) {
       console.error(error);
@@ -116,10 +107,9 @@ const RegistroUsuarioModal = ({ show, handleClose }) => {
           <div className="form-group">
             <label>Escolaridad:</label>
             <select name="Escolaridad" value={formData.Escolaridad} onChange={handleChange} required>
+              <option value="TSU">TSU</option>
               <option value="Profesional">Profesional</option>
               <option value="Preparatoria">Preparatoria</option>
-              <option value="Secundaria">Secundaria</option>
-              <option value="No cuenta con estudios">No cuenta con estudios</option>
             </select>
           </div>
           <div className="form-group">
@@ -130,6 +120,24 @@ const RegistroUsuarioModal = ({ show, handleClose }) => {
             <label>Años de Experiencia:</label>
             <input type="number" name="AñosExperiencia" value={formData.AñosExperiencia} onChange={handleChange} required />
           </div>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  const renderCustomDepartamento = () => {
+    if (formData.Departamento === 'otro') {
+      return (
+        <div className="form-group">
+          <label>Especificar departamento:</label>
+          <input
+            type="text"
+            name="customDepartamento"
+            value={formData.customDepartamento}
+            onChange={handleChange}
+            required
+          />
         </div>
       );
     }
@@ -187,27 +195,21 @@ const RegistroUsuarioModal = ({ show, handleClose }) => {
           </button>
         </div>
         <div className="form-group">
-          <label>Área:</label>
-          <select name="Área" value={formData.Área} onChange={handleChange} required>
-            <option value="">Seleccione un área</option>
-            {predefinedAreas.map((area) => (
-              <option key={area} value={area}>
-                {area}
-              </option>
-            ))}
-            <option value="custom">Otra</option>
+          <label>Departamento:</label>
+          <select name="Departamento" value={formData.Departamento} onChange={handleChange} required>
+            <option value="">Seleccione una opción</option>
+            <option value="Administración">Administración</option>
+            <option value="Aseguramiento de calidad">Aseguramiento de calidad</option>
+            <option value="Gestión para la calidad">Gestión para la calidad</option>
+            <option value="Gestión para la productividad">Gestión para la productividad</option>
+            <option value="Ingeniería">Ingeniería</option>
+            <option value="Mantenimiento">Mantenimiento</option>
+            <option value="Planeación y Logística">Planeación y Logística</option>
+            <option value="Producción">Producción</option>
+            <option value="otro">Otro</option>
           </select>
-          {formData.Área === 'custom' && (
-            <input
-              type="text"
-              name="customArea"
-              value={formData.customArea}
-              onChange={handleChange}
-              placeholder="Ingrese un área personalizada"
-              required
-            />
-          )}
         </div>
+        {renderCustomDepartamento()}
         {renderAdditionalFields()}
         <div className="modal-buttons">
           <button type="submit" className="btn-registrar">Registrar</button>
