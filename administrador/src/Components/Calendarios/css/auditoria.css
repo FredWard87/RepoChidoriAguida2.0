@@ -1,0 +1,90 @@
+.audit-calendar-container {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    gap: 20px;
+  }
+  
+  .calendar-container {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  
+  .audit-details-container {
+    flex: 1;
+    overflow-y: auto;
+  }
+  
+  .audit-accordion {
+    margin-bottom: 20px;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  .audit-accordion .MuiAccordionSummary-root {
+    background-color: #f5f5f5;
+    border-radius: 12px 12px 0 0;
+  }
+  
+  .audit-accordion .MuiAccordionDetails-root {
+    background-color: #fafafa;
+    border-radius: 0 0 12px 12px;
+    padding: 16px;
+  }
+  
+  .audit-details-container ul {
+    list-style: none;
+    padding-left: 0;
+  }
+  
+  .audit-details-container li {
+    margin: 5px 0;
+  }
+  
+  .red {
+    color: red;
+  }
+  
+  .orange {
+    color: orange;
+  }
+  
+  .green {
+    color: green;
+  }
+  
+  .no-audits-message-card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    background-color: white;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  
+  .no-audits-message {
+    color: #333;
+    font-size: 1.5em;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  /* Estilos responsivos */
+  @media (min-width: 768px) {
+    .audit-calendar-container {
+      flex-direction: row;
+    }
+  
+    .calendar-container {
+      flex: 0 1 40%;
+      margin-right: 20px;
+    }
+  
+    .audit-details-container {
+      flex: 1 1 60%;
+    }
+  }
+  
