@@ -3,10 +3,12 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../App';
 import './css/login.css';
+import logo from '../assets/img/logoAguida.png';
+import Swal from 'sweetalert2';
 
 const LoginForm = () => {
   const [formData, setFormData] = useState({ Correo: '', Contraseña: '' });
-  const [error, setError] = useState('');
+  const [error] = useState('');
   const { setUserData } = useContext(UserContext);
   const navigate = useNavigate();
 
@@ -21,6 +23,15 @@ const LoginForm = () => {
       const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/login`, formData);
       const { token, usuario } = response.data;
 
+      if (usuario.TipoUsuario !== 'Administrador') {
+        Swal.fire({
+          icon: 'error',
+          title: 'Acceso denegado',
+          text: 'Solo los administradores pueden iniciar sesión.',
+        });
+        return;
+      }
+
       // Guardar el token y los datos del usuario en el almacenamiento local
       localStorage.setItem('token', token);
       setUserData(usuario);
@@ -29,27 +40,37 @@ const LoginForm = () => {
       navigate('/home');
     } catch (error) {
       console.error(error);
-      setError('Credenciales inválidas. Por favor, intenta de nuevo.');
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Credenciales inválidas. Por favor, intenta de nuevo.',
+      });
     }
   };
 
   return (
+    <div className='login-container-all'>
     <div className="login-container">
+      <div className="form-group">
+        <div className='espacio'>
+       <img src={logo} alt="Logo Empresa" className="logo-empresa-login" />
+       </div>
+       </div>
       {error && <p className="error-message">{error}</p>}
       <form className="login-form" onSubmit={handleSubmit}>
         <div className="form-group">
-          <label htmlFor="Correo">Correo:</label>
+          <label htmlFor="Correo"></label>
           <input
             type="email"
             name="Correo"
             value={formData.Correo}
             onChange={handleChange}
-            placeholder="Correo"
+            placeholder="Correo electrónico"
             required
           />
         </div>
         <div className="form-group">
-          <label htmlFor="Contraseña">Contraseña:</label>
+          <label htmlFor="Contraseña"></label>
           <input
             type="password"
             name="Contraseña"
@@ -61,6 +82,7 @@ const LoginForm = () => {
         </div>
         <button type="submit" className="btn-login">Iniciar Sesión</button>
       </form>
+    </div>
     </div>
   );
 };

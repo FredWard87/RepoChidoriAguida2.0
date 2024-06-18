@@ -11,12 +11,15 @@ const AuthProvider = ({ children }) => {
         const token = localStorage.getItem('token');
         if (token) {
           const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/auth/verifyToken`, { token });
-          setUserData({ ...response.data, token });
+          const data = { ...response.data, token };
+          setUserData(data);
+          localStorage.setItem('userData', JSON.stringify(data));
         } else {
           setUserData(null);
         }
       } catch (error) {
         localStorage.removeItem('token');
+        localStorage.removeItem('userData');
         setUserData(null);
       }
     };

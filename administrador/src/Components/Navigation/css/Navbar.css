@@ -1,67 +1,119 @@
-/* Navbar.css */
 .navbar-container {
-  width: 100%;
-}
-.navbar-custom {
-  color: #ffffff;
-}
-.menu-icon {
-  color: #ffffff;
-}
-.drawer-container {
-  width: 250px;
-}
-.logo-img {
-  width: 100%;
-  padding: 20px;
-}
-.list-item {
-  color: #343a40;
-}
-.list-item-text {
-  font-size: 16px;
-}
-.link-button {
-  background: none;
-  border: none;
-  color: inherit;
-  cursor: pointer;
-  padding: 0;
-  font: inherit;
-  outline: inherit;
+  background-color: transparent;
 }
 
-/* Modal specific styles */
-.modal-content {
-  width: 400px; /* Aumentar el ancho del modal */
-  height: 200px;
-  margin: auto;
-  border-color: aqua;
-  border-radius: 15px;
-  background-color: #0c6d33; /* Cambiar el color de fondo a azul */
-  color: #ffffff; /* Cambiar el color del texto a blanco */
+.navbar-custom {
+  border-radius: 15px; 
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-.modal-header,
-.modal-footer {
+
+.logo-img {
+  margin: 0 auto 20px; 
+  height: auto; 
+  width: 100%;
+  max-width: 200px;
+  display: block;
+  border-radius: 10px;
+}
+
+.dropdown-toggle {
   border: none;
-}
-.modal-title {
-  margin: auto;
-  font-size: 1.5em; /* Aumentar el tamaño del título */
-}
-.modal-body {
+  background: transparent;
+  color: #000000;
+  width: 100%;
   text-align: center;
-  font-size: 1.2em; /* Aumentar el tamaño del texto del cuerpo */
+  padding: 0;
+}
+
+.list-item {
+  padding: 10px 0; 
+}
+
+.list-item-text {
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 50;
+  color: #333;
+}
+
+.link-button {
+  border: none;
+  background: transparent;
+  color: #000000;
+  width: 100%;
+  text-align: center;
+  padding: 10px;
+  cursor: pointer;
+  text-decoration: none;
 }
 
 @media (max-width: 768px) {
-  .navbar-custom {
-    padding: 10px;
-  }
   .drawer-container {
-    width: 100%;
-  }
-  .modal-content {
-    width: 90%;
+    width: 84%;
+    max-width: 250px; 
   }
 }
+
+.menu-icon {
+  color: #ffffff;
+}
+
+.dropdown-menu {
+  position: absolute;
+  width: 200px;
+  border-radius: 10px;
+  background-color: #D9D9D9;
+  z-index: 1;
+}
+
+.link-button:hover {
+  border-radius: 10px;
+}
+
+.dropdown-menu button:hover {
+  background-color: #3ccc37;
+  color: #ffffff;
+}
+
+
+
+
+.drawer-container {
+  width: 83.5%;
+  background-color: #ffffff;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100vh;
+}
+
+.drawer-list {
+  flex-grow: 1;
+}
+
+.logout-container {
+  margin-top: auto;
+}
+
+.logout-button {
+  border: none;
+  background-color: #3ccc37;
+  color: #ffffff;
+  width: 100%;
+  text-align: center;
+  padding: 15px;
+  cursor: pointer;
+  text-decoration: none;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+.swal2-container {
+  z-index: 1200;
+}
+
+
+

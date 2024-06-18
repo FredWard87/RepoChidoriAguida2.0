@@ -1,12 +1,15 @@
 // App.js
 import React, { createContext } from 'react';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Login from "./components/Login/loginForm" // Importa el componente de inicio de sesión
+import Login from "./components/Login/loginForm" 
 import Inicio from './components/Home/inicio';
-import AuthProvider from "./authProvider.jsx";
+import AuthProvider from './authProvider';
+import Pendiente from './components/Pendientes/Pendiente';
+import Fotos from './components/Pendientes/Foto';
+import Reporte from './components/Reportes/Reporte';
+
 
 export const UserContext = createContext(null);
-
 
 function App() {
   return (
@@ -14,18 +17,16 @@ function App() {
     <div className="App">
       <Router>
         <Routes>
-          <Route path="/" element={<Login />} /> {/* Cambia la ruta raíz a la ruta de inicio de sesión */}
-
-          <Route path="/home" element={<Inicio/>}/>
-          
-          {/* Agrega más rutas aquí si es necesario */}
+          <Route path="/" element={<Login />} /> {}
+          <Route path="/home" element={<Inicio/>}/> {}
+          <Route path="/pendiente" element={<Pendiente/>}/> {}
+          <Route path="/foto" element={<Fotos/>}/> {}
+          <Route path="/reporte" element={<Reporte/>}/> {}
         </Routes>
       </Router>
     </div>
-    </AuthProvider>
-
+  </AuthProvider>
   );
 }
 
 export default App;
-

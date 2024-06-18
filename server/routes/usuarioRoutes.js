@@ -11,12 +11,12 @@ router.get('/', usuariosController.obtenerUsuarios);
 // Ruta para obtener un usuario por su ID (GET)
 router.get('/:id', usuariosController.obtenerUsuarioPorId);
 
-router.get('/nombre/:nombre', usuariosController.obtenerUsuarioPorNombre);
-
 // Ruta para actualizar un usuario por su ID (PUT)
 router.put('/:id', usuariosController.actualizarUsuario);
 
 // Ruta para eliminar un usuario por su ID (DELETE)
 router.delete('/:id', usuariosController.eliminarUsuario);
+
+router.get('/nombre/:nombre', usuariosController.obtenerUsuarioPorNombre);
 
 module.exports = router;

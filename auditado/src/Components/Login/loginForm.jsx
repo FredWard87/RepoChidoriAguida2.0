@@ -2,8 +2,8 @@ import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../App';
-import './css/login.css';
-import logo from '../../assets/logoAguida.png'
+import './css/Login.css';
+import logo from '../../assets/img/logoAguida.png'
 import Swal from 'sweetalert2';
 
 const LoginForm = () => {
@@ -23,7 +23,7 @@ const LoginForm = () => {
       const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/login`, formData);
       const { token, usuario } = response.data;
 
-      if (usuario.TipoUsuario !== 'auditado') {
+      if (usuario.TipoUsuario !== 'Auditado') {
         Swal.fire({
           icon: 'error',
           title: 'Acceso denegado',

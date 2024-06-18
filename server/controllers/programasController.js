@@ -34,14 +34,22 @@ const cargaMasiva = async (req, res) => {
     const programas = [];
     let nombreProgramaActual = null;
     let descripciones = [];
+    const erroresDuplicados = [];
 
-    data.forEach(row => {
+    for (const row of data) {
       console.log(row); // Añadir este log para depurar el valor de row
       // Verificar si es una fila con el nombre del programa
       if (row['Nombre del Programa']) {
         // Si encontramos un nuevo nombre de programa, almacenamos las descripciones del programa anterior
         if (nombreProgramaActual) {
-          programas.push({ Nombre: nombreProgramaActual, Descripcion: descripciones });
+          // Verificar si el programa ya existe en la base de datos
+          const programaExistente = await Programas.findOne({ Nombre: nombreProgramaActual });
+          if (!programaExistente) {
+            programas.push({ Nombre: nombreProgramaActual, Descripcion: descripciones });
+          } else {
+            erroresDuplicados.push(nombreProgramaActual);
+            console.warn(`El programa ${nombreProgramaActual} ya existe y no será añadido.`);
+          }
           descripciones = []; // Reiniciar descripciones para el nuevo programa
         }
         nombreProgramaActual = row['Nombre del Programa']; // Actualizar el nombre del programa actual
@@ -56,18 +64,33 @@ const cargaMasiva = async (req, res) => {
       } else if (row['Descripción del Requisito']) {
         console.error(`ID no está presente o no es una cadena: ${row.ID}`);
       }
-    });
+    }
 
     // Agregar el último grupo de descripciones (si existe)
     if (nombreProgramaActual) {
-      programas.push({ Nombre: nombreProgramaActual, Descripcion: descripciones });
+      const programaExistente = await Programas.findOne({ Nombre: nombreProgramaActual });
+      if (!programaExistente) {
+        programas.push({ Nombre: nombreProgramaActual, Descripcion: descripciones });
+      } else {
+        erroresDuplicados.push(nombreProgramaActual);
+        console.warn(`El programa ${nombreProgramaActual} ya existe y no será añadido.`);
+      }
     }
 
     // Verificar el contenido de programas antes de insertarlo
     console.log(JSON.stringify(programas, null, 2));
 
     // Insertar los programas en la base de datos
-    await Programas.insertMany(programas);
+    if (programas.length > 0) {
+      await Programas.insertMany(programas);
+    }
+
+    if (erroresDuplicados.length > 0) {
+      return res.status(400).json({
+        message: 'Algunos programas ya existen y no fueron añadidos.',
+        duplicados: erroresDuplicados
+      });
+    }
 
     res.status(201).json({ message: 'Programas cargados exitosamente' });
   } catch (error) {
@@ -76,9 +99,28 @@ const cargaMasiva = async (req, res) => {
   }
 };
 
+const editarPrograma = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { Descripcion } = req.body;
+    const programaActualizado = await Programas.findByIdAndUpdate(
+      id,
+      { Descripcion },
+      { new: true }
+    );
+    if (!programaActualizado) {
+      return res.status(404).json({ error: 'Programa no encontrado' });
+    }
+    res.status(200).json(programaActualizado);
+  } catch (error) {
+    console.error('Error al actualizar programa:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
 
 module.exports = {
   obtenerProgramas,
   crearPrograma,
   cargaMasiva,
+  editarPrograma, // Exportar la nueva función
 };

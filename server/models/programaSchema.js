@@ -1,5 +1,5 @@
-// models/programaSchema.js
 const mongoose = require('mongoose');
+
 
 const RequisitosSchema = new mongoose.Schema({
   ID: { type: String, required: true },

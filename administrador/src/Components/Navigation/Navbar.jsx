@@ -1,5 +1,6 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from '../../App';
 import "./css/Navbar.css";
 import Container from "react-bootstrap/Container";
 import Navbar from "react-bootstrap/Navbar";
@@ -12,74 +13,78 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import Dropdown from 'react-bootstrap/Dropdown';
-import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
 import logo from "../../assets/img/logoAguida.png";
-import { UserContext } from "../../App";
+import Swal from 'sweetalert2';
 
 export default function Navigation() {
   const [open, setOpen] = useState(false);
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
-  const { setUserData } = useContext(UserContext);
   const navigate = useNavigate();
+  const { setUserData } = useContext(UserContext);
 
   const toggleDrawer = (newOpen) => () => {
-    if (!showLogoutModal) { // Si el modal no está abierto
-      setOpen(newOpen);
+    setOpen(newOpen);
+  };
+
+const handleLogout = () => {
+  Swal.fire({
+    title: '¿Estás seguro de que quieres cerrar sesión?',
+    text: '¡Tu sesión actual se cerrará!',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3ccc37',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Sí, cerrar sesión',
+    cancelButtonText: 'Cancelar'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      localStorage.removeItem('token');
+      setUserData(null);
+      navigate('/');
     }
-  };
+  });
+};
 
-  const handleLogout = () => {
-    setUserData(null);
-    navigate('/');
-  };
-
-  const confirmLogout = () => {
-    setShowLogoutModal(true);
-    setOpen(false); // Cerrar el drawer
-  };
-
-  const handleCloseLogoutModal = () => {
-    setShowLogoutModal(false);
-  };
 
   return (
     <div className="navbar-container">
       <Navbar className="navbar-custom">
         <Container>
           <IconButton onClick={toggleDrawer(true)} aria-label="menu">
-            <MenuIcon className="menu-icon" />
+            <MenuIcon className="menu-icon" style={{ fontSize: '200%' }} />
           </IconButton>
           <Drawer open={open} onClose={toggleDrawer(false)}>
-            <DrawerList confirmLogout={confirmLogout} />
+            <DrawerList handleLogout={handleLogout} />
           </Drawer>
         </Container>
       </Navbar>
-      <LogoutModal
-        show={showLogoutModal}
-        handleClose={handleCloseLogoutModal}
-        handleLogout={handleLogout}
-      />
     </div>
   );
 }
 
-function DrawerList({ confirmLogout }) {
+function DrawerList({ handleLogout }) {
+  const [showSubmenu, setShowSubmenu] = useState(false); // Estado para controlar la visibilidad del submenú
+
+  const toggleSubmenu = () => {
+    setShowSubmenu(!showSubmenu); // Cambia el estado de visibilidad del submenú
+  };
+
   const drawerItems = [
-    { text: "Inicio", href: "/home"},
-    { text: "Registro Y visualización de usuarios", href: "/usuariosRegistrados"},
+    { text: "Inicio", href: "/home" },
+    { text: "Usuarios", href: "/usuariosRegistrados" },
     { text: "Programa", href: "/programa" },
-    { text: "Evaluación", href: "/calificaciones" },
-    { text: "Auditorias", subItems: [
-        { text: "Generar auditoria", href: "/datos" },
-        { text: "Revicion de auditoria", href: "/" },
-        { text: "Auditorias terminadas", href: "/" }
-      ] }
+    {
+      text: "Auditorias", subItems: [
+        { text: "Generar auditoría", href: "/datos" },
+        { text: "Revisión de auditoría", href: "/revicion" },
+        { text: "Auditorias terminadas", href: "/terminada" }
+      ]
+    },
+    { text: "Departamentos", href: "/departaments" },
   ];
 
   return (
     <Box className="drawer-container">
-      <List>
+      <List className="drawer-list">
         <a href="/home">
           <img src={logo} alt="Logo Empresa" className="logo-img" />
         </a>
@@ -88,16 +93,16 @@ function DrawerList({ confirmLogout }) {
             {item.subItems ? (
               <Dropdown>
                 <Dropdown.Toggle variant="transparent" className="dropdown-toggle">
-                  <ListItem disablePadding className="list-item">
+                  <ListItem disablePadding className="list-item" onClick={toggleSubmenu}>
                     <ListItemButton>
-                      <ListItemText primary={item.text} className="list -item-text" />
+                      <ListItemText primary={item.text} className="list-item-text" />
                     </ListItemButton>
                   </ListItem>
                 </Dropdown.Toggle>
-                <Dropdown.Menu>
+                <Dropdown.Menu style={{ display: showSubmenu ? 'block' : 'none' }}>
                   {item.subItems.map((subItem, subIndex) => (
                     <Dropdown.Item key={subIndex}>
-                      <button className="link-button" onClick={() => window.location.href=subItem.href}>
+                      <button className="link-button" onClick={() => window.location.href = subItem.href}>
                         {subItem.text}
                       </button>
                     </Dropdown.Item>
@@ -107,43 +112,26 @@ function DrawerList({ confirmLogout }) {
             ) : (
               <ListItem disablePadding className="list-item">
                 <ListItemButton>
-                  <button className="link-button" onClick={() => window.location.href=item.href}>
-                    <ListItemText primary={item.text} className="list-item-text" />
-                  </button>
+                  {item.onClick ? (
+                    <button className="link-button" onClick={item.onClick}>
+                      <ListItemText primary={item.text} className="list-item-text" />
+                    </button>
+                  ) : (
+                    <button className="link-button" onClick={() => window.location.href = item.href}>
+                      <ListItemText primary={item.text} className="list-item-text" />
+                    </button>
+                  )}
                 </ListItemButton>
               </ListItem>
             )}
           </div>
         ))}
-        <ListItem disablePadding className="list-item">
-          <ListItemButton>
-            <button className="link-button" onClick={confirmLogout}>
-              <ListItemText primary="Cerrar Sesión" className="list-item-text" />
-            </button>
-          </ListItemButton>
-        </ListItem>
       </List>
+      <div className="logout-container">
+        <button className="link-button logout-button" onClick={handleLogout}>
+          Cerrar sesión
+        </button>
+      </div>
     </Box>
-  );
-}
-
-function LogoutModal({ show, handleClose, handleLogout }) {
-  return (
-    <Modal show={show} onHide={handleClose} centered>
-      <Modal.Header closeButton>
-        <Modal.Title>Confirmar Cierre de Sesión</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <p>¿Estás seguro de que deseas cerrar sesión?</p>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>
-          Cancelar
-        </Button>
-        <Button variant="primary" onClick={handleLogout}>
-          Cerrar Sesión
-        </Button>
-      </Modal.Footer>
-    </Modal>
   );
 }

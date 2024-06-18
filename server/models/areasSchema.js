@@ -1,3 +1,5 @@
+// models/areasSchema.js
+
 const mongoose = require('mongoose');
 
 const areasSchema = new mongoose.Schema({

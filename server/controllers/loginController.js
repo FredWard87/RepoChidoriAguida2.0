@@ -24,7 +24,7 @@ const iniciarSesion = async (req, res) => {
         tipoUsuario = 'Administrador';
         break;
       case 'auditor':
-        tipoUsuario = 'Auditor';
+        tipoUsuario = 'auditor';
         break;
       case 'auditado':
         tipoUsuario = 'Auditado';
@@ -34,9 +34,10 @@ const iniciarSesion = async (req, res) => {
         break;
     }
 
-    const token = jwt.sign({ userId: usuario._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ userId: usuario._id }, process.env.JWT_SECRET, { expiresIn: '8h' });
+   
 
-    return res.status(200).json({ token, tipo: tipoUsuario, usuario: { Correo: usuario.Correo, TipoUsuario: tipoUsuario } });
+    return res.status(200).json({ token, tipo: tipoUsuario, usuario: { Correo: usuario.Correo, Nombre: usuario.Nombre, TipoUsuario: tipoUsuario } });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Error interno del servidor' });

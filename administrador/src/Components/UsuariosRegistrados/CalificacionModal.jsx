@@ -51,7 +51,7 @@ const SaveButton = styled.button`
   color: white;
   border: none;
   border-radius: 5px;
-  font-size: 1.0 rem;
+  font-size: 1rem;
   cursor: pointer;
 
   &:hover {

@@ -21,7 +21,9 @@ const Datos = () => {
     NombresObservadores: '',
     Programa: [],
     Estado: '',
-    Observaciones: '',
+    PorcentajeTotal: '',
+    FechaElaboracion:'',
+    Estatus:''
   });
 
   const [buttonText, setButtonText] = useState({
@@ -39,6 +41,9 @@ const Datos = () => {
   const [showOtherAreaInput, setShowOtherAreaInput] = useState(false);
   const [auditorLiderSeleccionado, setAuditorLiderSeleccionado] = useState('');
   const [equipoAuditorDisabled, setEquipoAuditorDisabled] = useState(false);
+  const filteredUsuarios = selectedDepartamento
+  ? usuarios.filter(usuario => usuario.Departamento === selectedDepartamento)
+  : usuarios;
 
   useEffect(() => {
     const fetchAreas = async () => {
@@ -169,12 +174,12 @@ const Datos = () => {
     e.preventDefault();
     try {
       const defaultEstado = "pendiente";
-      const defaultObservaciones = "";
+      const defaultPorcentaje = "0";
   
       const formDataWithDefaults = {
         ...formData,
         Estado: defaultEstado,
-        Observaciones: defaultObservaciones
+        PorcentajeTotal: defaultPorcentaje
       };
   
       if (formData.Programa.length === 0) {
@@ -206,7 +211,11 @@ const Datos = () => {
         icon: 'success',
         confirmButtonText: 'Aceptar',
         confirmButtonColor: '#3ccc37'
-      });
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.reload();
+        }
+      });      
       console.log(response.data);
   
       // Limpiar los campos del formulario después de agregar un usuario exitosamente
@@ -225,7 +234,7 @@ const Datos = () => {
         NombresObservadores: '',
         Programa: [],
         Estado: '',
-        Observaciones: '',
+        PorcentajeTotal: '',
       });
       setFormStep(1);
     } catch (error) {
@@ -312,12 +321,16 @@ const Datos = () => {
     if (selectedProgram) {
       // Modificar el objeto seleccionado para que tenga la estructura esperada por el esquema
       const formattedProgram = {
+        Porcentaje: '0',
         Nombre: selectedProgram.Nombre,
         Descripcion: selectedProgram.Descripcion.map(desc => ({
           ID: desc.ID,
+          Criterio: desc.Criterio || null,
           Requisito: desc.Requisito,
-          Observacion: desc.Observacion || 'Ninguna',
-          Hallazgo: desc.Hallazgo || 'Ninguno'
+          Observacion: desc.Observacion || "",
+          Hallazgo: desc.Hallazgo || " ",
+          FechaElaboracion: desc.Hallazgo || " ",
+          Estatus: desc.Hallazgo || " "
         }))
       };
       console.log(selectedProgram);
@@ -351,7 +364,6 @@ const Datos = () => {
     const dept = areas.find(area => area.departamento === selectedDept);
     setFilteredAreas(dept ? dept.areas : []);
     
-    // Actualiza formData con el departamento seleccionado
     setFormData({
       ...formData,
       Departamento: selectedDept
@@ -397,6 +409,7 @@ const Datos = () => {
         return {};
     }
   };
+  
   
   const getRequiredFieldsForStep = (step) => {
     switch (step) {
@@ -528,9 +541,15 @@ const Datos = () => {
             </div>
             <div className="form-group-datos">
               <label>Auditados:</label>
-              <select name="Auditados" value={formData.Auditados} onChange={handleChange} required>
+              <select
+                id="Auditados"
+                name="Auditados"
+                value={formData.Auditados}
+                onChange={handleChange}
+                required
+              >
                 <option value="">Seleccione...</option>
-                {usuarios && usuarios.filter(usuario => usuario.TipoUsuario === 'auditado').map(usuario =>(
+                {filteredUsuarios.map((usuario) => (
                   <option key={usuario._id} value={usuario.Nombre}>{usuario.Nombre}</option>
                 ))}
               </select>
@@ -694,7 +713,6 @@ const Datos = () => {
     </form>
   </div>
 )}
-
 
     </div>
   );

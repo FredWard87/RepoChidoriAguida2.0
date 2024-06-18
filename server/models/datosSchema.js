@@ -2,12 +2,14 @@ const mongoose = require("mongoose");
 
 const DescripcionSchema = new mongoose.Schema({
   ID: { type: String, required: true },
+  Criterio: { type: String },
   Requisito: { type: String, required: true },
-  Observacion: { type: String, required: true },
-  Hallazgo: { type: String, required: true }
+  Observacion: { type: String },
+  Hallazgo: String,
 });
 
 const ProgramaSchema = new mongoose.Schema({
+  Porcentaje: { type: String, required: true },
   Nombre: { type: String, required: true },
   Descripcion: [DescripcionSchema]
 });
@@ -19,6 +21,8 @@ const EquipoSchema = new mongoose.Schema({
 
 const DatosSchema = new mongoose.Schema({
   TipoAuditoria: { type: String, required: true },
+  FechaInicio: { type: String, required: true },
+  FechaFin: { type: String, required: true },
   Duracion: { type: String, required: true },
   Departamento: { type: String, required: true },
   AreasAudi: { type: String, required: true },
@@ -30,7 +34,11 @@ const DatosSchema = new mongoose.Schema({
   NombresObservadores: { type: String, required: false },
   Programa: [ProgramaSchema],
   Estado: { type: String, required: false },
-  Observaciones: { type: String, required: false }
+  PorcentajeTotal: { type: String, required: false },
+  FechaElaboracion: { type: String, required: false },
+  Estatus:{ type: String, required: false }
 });
 
-module.exports = mongoose.model("Datos", DatosSchema);
+const Datos = mongoose.model("Datos", DatosSchema);
+
+module.exports = Datos;

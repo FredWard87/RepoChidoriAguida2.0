@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Navbar from '../Navigation/Navbar';
+import Navigation from '../Navigation/Navbar';
 import './css/usuarios.css';
 import './css/editForm.css';
 import { format } from 'date-fns';
 import RegistroUsuarioModal from './RegistroUsuarioModal';
 import CalificacionModal from './CalificacionModal';
+
 const UsuariosRegistro = () => {
+  const predefinedAreas = [
+    'Calidad', 'Mantenimiento', 'Planta', 'Sistema de Gestión de Calidad e Inocuidad', 
+    'Almacenes', 'preparación', 'envasado y embalaje', 'Proceso de Producción', 
+    'Aseguramiento de Calidad', 'Áreas de Proceso', 'SGCI Envasadora Aguida'
+  ];
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -21,9 +27,9 @@ const UsuariosRegistro = () => {
     Puesto: '',
     FechaIngreso: '',
     Escolaridad: '',
-    Departamento:'',
-    //cosa movida carrera
+    Área: null,
     Carrera:'',
+    customArea: '', 
     AñosExperiencia: '',
     FormaParteEquipoInocuidad: false,
     calificaciones: [] // Inicializar como un array vacío
@@ -32,8 +38,6 @@ const UsuariosRegistro = () => {
   const [filtroTipoUsuario, setFiltroTipoUsuario] = useState('');
   const [filtroInocuidad, setFiltroInocuidad] = useState('');
   const [filtroAprobado, setFiltroAprobado] = useState('');
-
-  //cosa movida
   const [filtroEscolaridad, setFiltroEscolaridad] = useState('');
 
 
@@ -70,8 +74,6 @@ const UsuariosRegistro = () => {
     return yearsInCompany;
   };
 
-//modifique el HadleEditClick
-
   const handleEditClick = (usuario) => {
     const formattedFechaIngreso = usuario.FechaIngreso ? new Date(usuario.FechaIngreso).toISOString().split('T')[0] : '';
     setUsuarioAEditar(usuario);
@@ -84,7 +86,7 @@ const UsuariosRegistro = () => {
       Escolaridad: usuario.Escolaridad || '',
       //cosa movida carrera
       Carrera: usuario.Carrera || '',
-      Departamento: usuario.Departamento || '',
+      Área: usuario.Área || '',
       AñosExperiencia: usuario.AñosExperiencia || '',
       FormaParteEquipoInocuidad: usuario.FormaParteEquipoInocuidad || false,
       PuntuacionEspecialidad : usuario.PuntuacionEspecialidad || '',
@@ -92,6 +94,8 @@ const UsuariosRegistro = () => {
     });
     setShowEditModal(true);
   };
+
+  const [customArea, setCustomArea] = useState('');
   
 
   const handleAgregarCalificaciones = (usuario) => {
@@ -99,8 +103,6 @@ const UsuariosRegistro = () => {
     setShowCalificacionModal(true);
   };
 
-
- 
   const handleGuardarCalificaciones = (calificaciones) => {
     if (!usuarioAEditar || !calificaciones || calificaciones.length === 0) {
       console.error("Usuario o calificaciones inválidas");
@@ -120,13 +122,10 @@ const UsuariosRegistro = () => {
       })
       .catch(error => {
         console.error('Error al actualizar las calificaciones:', error);
+        // Manejar el error adecuadamente y proporcionar retroalimentación al usuario si es necesario
       });
   };
-  const [customArea, setCustomArea] = useState('');
-
-
-  //Modifique el EditFormChange
-
+  
   const handleEditFormChange = (e, value) => {
     const { name } = e.target;
     const newValue = e.target.type === 'checkbox' ? value : e.target.value;
@@ -148,9 +147,6 @@ const UsuariosRegistro = () => {
       }
     }
   };
-  
-
-//modifique el HadleEditSubit
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();
@@ -179,7 +175,6 @@ const UsuariosRegistro = () => {
       console.error('Error al actualizar el usuario:', error);
     }
   };
-  
 
   const handleCloseEditModal = () => {
     setShowEditModal(false);
@@ -227,23 +222,29 @@ const UsuariosRegistro = () => {
     }
   };
 
+  
   const filteredUsers = users.filter(user => {
     return (
       (filtroTipoUsuario === '' || user.TipoUsuario === filtroTipoUsuario) &&
       (filtroInocuidad === '' || user.FormaParteEquipoInocuidad.toString() === filtroInocuidad) &&
-      (filtroAprobado === '' || user.Aprobado.toString() === filtroAprobado) &&
-      //cosas movidad, escolaridad
+      (filtroAprobado === '' || user.Aprobado.toString() === filtroAprobado)&&
       (filtroEscolaridad === '' || user.Escolaridad.toString() === filtroEscolaridad)
     );
   });
+
   if (loading) return <p>Cargando usuarios...</p>;
   if (error) return <p>{error}</p>;
+
   return (
     <div>
-      <Navbar />
+      <div style={{ position: 'absolute', top: 0, left: 0 }}>
+          <Navigation />
+        </div>
       <div className="usuarios-container">
-        <h1>Registro Y Visualización de Usuarios</h1>
-        <button onClick={() => setShowRegistrationForm(true)}>Agregar Usuario</button>
+        <h1 className="h1-small-margin">Usuarios</h1>
+        <div className='botonA-pos'>
+        <button className='botonA' onClick={() => setShowRegistrationForm(true)}>Agregar +</button>
+        </div>
         <div className="filters">
           <select value={filtroTipoUsuario} onChange={(e) => setFiltroTipoUsuario(e.target.value)}>
             <option value="">Todos los tipos</option>
@@ -251,6 +252,7 @@ const UsuariosRegistro = () => {
             <option value="auditor">Auditor</option>
             <option value="Administrador">Administrador</option>
           </select>
+          
           <select value={filtroEscolaridad} onChange={(e) => setFiltroEscolaridad(e.target.value)}>
             <option value="">Escolaridad</option>
             <option value="TSU">TSU</option>
@@ -326,19 +328,31 @@ const UsuariosRegistro = () => {
                   />
                 </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+                <div className="form-group">
+                <label>Área:</label>
+                <select name="Área" value={editFormData.Área || ''} onChange={handleEditFormChange} required>
+                  <option value="">Seleccione un área</option>
+                  {predefinedAreas.map((area) => (
+                    <option key={area} value={area}>
+                      {area}
+                    </option>
+                  ))}
+                  <option value="custom">Otra</option>
+                </select>
+                {editFormData.Área === 'custom' && (
+                  <div className="form-group">
+                    <label>Área Personalizada:</label>
+                    <input
+                      type="text"
+                      name="customArea"
+                      value={customArea}
+                      onChange={handleEditFormChange}
+                      placeholder="Ingrese un área personalizada"
+                      required
+                    />
+                  </div>
+                )}
+              </div>
 
                 {(usuarioAEditar.TipoUsuario === 'auditor' || usuarioAEditar.TipoUsuario === 'Administrador' || usuarioAEditar.TipoUsuario === 'empleado') && (
                   <>
@@ -366,8 +380,8 @@ const UsuariosRegistro = () => {
                 <select name="Escolaridad" value={editFormData.Escolaridad} onChange={handleEditFormChange} required>
                   <option value="">Seleccione una opción</option>
                   <option value="TSU">TSU</option>
-                  <option value="Profesional">Profesional</option>
-                  <option value="Preparatoria">Preparatoria</option>
+                   <option value="Profesional">Profesional</option>
+                   <option value="Preparatoria">Preparatoria</option>
                 </select>
               </label>         
                         <input
@@ -429,12 +443,15 @@ const UsuariosRegistro = () => {
 
 const UserCard = ({ user, formatDate, calculateYearsInCompany, onEditClick, onDeleteClick, onDegradarClick, onPromocionarClick, onAgregarCalificaciones }) => {
   const [showCalificaciones, setShowCalificaciones] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
   return (
     <div className="card">
       <h3>{user.Nombre}</h3>
       <p><strong>Correo:</strong> {user.Correo}</p>
       <p><strong>Tipo de usuario:</strong> {user.TipoUsuario}</p>
       <p><strong>Puesto:</strong> {user.Puesto}</p>
+      <p><strong>Área:</strong> {user.Área}</p> {}
       {(user.TipoUsuario === 'auditor' || user.TipoUsuario === 'Administrador'|| user.TipoUsuario === 'empleado') && (
         <>
           {user.FechaIngreso && (
@@ -448,23 +465,36 @@ const UserCard = ({ user, formatDate, calculateYearsInCompany, onEditClick, onDe
           <p><strong>Forma Parte del Equipo de Inocuidad:</strong> {user.FormaParteEquipoInocuidad ? 'Sí' : 'No'}</p>
           <p><strong>Aprobado:</strong> {user.Aprobado ? 'Sí' : 'No'}</p>
           <p><strong>Promedio de Evaluación:</strong> {user.PromedioEvaluacion}</p>
-          <button className="editar" onClick={() => onEditClick(user)}>Editar</button>
+          <div className="botones-cards">
+          <div className="dropdown">
+          <div className='dropdown-toggle-m'>
+            <button className="dropdown-toggle" onClick={() => setDropdownOpen(!dropdownOpen)}>
+             Opciones
+            </button>
+          </div>
+    {dropdownOpen && (
+          <div className='botones-cards-2'>
+          <button onClick={() => onEditClick(user)}>Editar</button>
           <button onClick={() => onDeleteClick(user._id)}>Eliminar</button>
           <button onClick={onAgregarCalificaciones}>Agregar Calificaciones</button>
+
           {(user.TipoUsuario === 'empleado') && (
             <>
               {(user.PromedioEvaluacion >= 80) && <button onClick={() => onPromocionarClick(user._id)}>Promocionar</button>}
             </>
           )}
+
           {(user.TipoUsuario === 'auditor') && (
             <>
               {(user.PromedioEvaluacion <= 79 ) && <button onClick={() => onDegradarClick(user._id)}>Degradar</button>}
             </>
           )}
+
           <div className="accordion">
             <button onClick={() => setShowCalificaciones(!showCalificaciones)}>
               Ver Calificaciones
             </button>
+            </div>
             {showCalificaciones && (
               <div className="calificaciones">
                 <h4>Calificaciones</h4>
@@ -480,6 +510,9 @@ const UserCard = ({ user, formatDate, calculateYearsInCompany, onEditClick, onDe
               </div>
             )}
           </div>
+          )}
+          </div>
+        </div>
         </>
       )}
       {user.TipoUsuario === 'auditado' && (
@@ -491,5 +524,7 @@ const UserCard = ({ user, formatDate, calculateYearsInCompany, onEditClick, onDe
     </div>
   );
 };
+
+
 
 export default UsuariosRegistro;
