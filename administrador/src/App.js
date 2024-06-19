@@ -7,6 +7,8 @@ import Inicio from './Components/Home/inicio';
 import UsuariosRegis from './Components/UsuariosRegistrados/usuariosRegistro'; // Importa el componente UsuariosRegistrados
 import Datos from './Components/DatosGenerales/Datos'
 import Programas from './Components/ProgramasIn/Programa';
+import Calendarioss from './Components/Calendarios/AuditCalendar'
+import Calendarios from './Components/Calendarios/CalendarioGeneral'
 import AuthProvider from './authProvider';
 import Departamento from './Components/Departaments/departamento'
 import Revicion from './Components/Reviciones/Revicion';
@@ -24,6 +26,8 @@ function App() {
           <Route path="/datos" element={<Datos/>}/>
           <Route path="/programa" element={<Programas/>}/>
           <Route path="/usuarios" element={<Usuarios />} />
+          <Route path="/auditcalendar" element={<Calendarioss />} />
+          <Route path="/calendario" element={<Calendarios />} />
           <Route path="/departaments" element={<Departamento />} />
           <Route path="/home" element={<Inicio/>}/>
           <Route path="/usuariosRegistrados" element={<UsuariosRegis />} /> 
