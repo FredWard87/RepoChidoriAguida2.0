@@ -120,7 +120,7 @@ const AuditCalendar = () => {
                   <MenuItem value="">Todos</MenuItem>
                   <MenuItem value="Interna">Interna</MenuItem>
                   <MenuItem value="Externa">Externa</MenuItem>
-                  <MenuItem value="Responsabilidad Social">Responsabilidad Social</MenuItem>
+                  <MenuItem value="Responsabilidad social">Responsabilidad social</MenuItem>
                   <MenuItem value="FSSC 22000">FSSC 22000</MenuItem>
                   <MenuItem value="Inspección de autoridades">Inspección de autoridades</MenuItem>
                 </Select>
