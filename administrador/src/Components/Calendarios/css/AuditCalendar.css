@@ -1,57 +1,122 @@
 .audit-calendar-container {
-    display: flex;
-    padding: 20px;
-    gap: 20px;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.audit-details-container {
+  flex: 1;
+  width: 100%;
+  overflow-x: auto;
+}
+.filters-container {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.filters-container .MuiFormControl-root {
+  background-color: #e0e0e0; /* Color de fondo para los filtros */
+  border-radius: 5px; /* Bordes redondeados */
+}
+
+/* Agrega un poco de margen entre los filtros */
+.filter-control {
+  min-width: 200px;
+  margin: 5px;
+}
+
+
+
+.filter-control {
+  min-width: 200px;
+}
+
+.audit-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.audit-table th,
+.audit-table td {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 12px;
+}
+
+.audit-table th {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.audit-table td {
+  background-color: white;
+}
+
+.audit-table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.audit-table tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+.audit-table ul {
+  margin: 0;
+  padding: 0;
+}
+
+.audit-table li {
+  margin: 5px 0;
+}
+
+.red {
+  background-color: #ffcccc; /* Fondo rojo claro */
+  color: red;
+}
+
+.orange {
+  background-color: #ffe0b3; /* Fondo naranja claro */
+  color: orange;
+}
+
+.green {
+  background-color: #ccffcc; /* Fondo verde claro */
+  color: green;
+}
+
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+  .audit-table th,
+  .audit-table td {
+    padding: 8px;
   }
   
-  .calendar-container {
-    flex: 0 1 40%;
-    margin-right: 20px;
+  .audit-calendar-container {
+    padding: 10px;
+  }
+  .filters-container .MuiFormControl-root {
+    padding: 5px; /* Ajusta el padding en pantallas pequeñas */
+  }
+}
+
+@media (max-width: 480px) {
+  .audit-table th,
+  .audit-table td {
+    padding: 6px;
   }
   
+  .audit-calendar-container {
+    padding: 5px;
+  }
+
   .audit-details-container {
-    flex: 1 1 60%;
-    overflow-y: auto;
+    margin-top: 10px;
   }
-  
-  .audit-accordion {
-    margin-bottom: 20px;
-    border-radius: 12px;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s, box-shadow 0.2s;
+  .filters-container .MuiFormControl-root {
+    padding: 5px; /* Ajusta el padding en pantallas pequeñas */
   }
-  
- 
-  
-  .audit-accordion .MuiAccordionSummary-root {
-    background-color: #f5f5f5;
-    border-radius: 12px 12px 0 0;
-  }
-  
-  .audit-accordion .MuiAccordionDetails-root {
-    background-color: #fafafa;
-    border-radius: 0 0 12px 12px;
-    padding: 16px;
-  }
-  
-  .audit-details-container ul {
-    list-style: none;
-    padding-left: 0;
-  }
-  
-  .audit-details-container li {
-    margin: 5px 0;
-  }
-  
-  .red {
-    color: red;
-  }
-  
-  .orange {
-    color: orange;
-  }
-  
-  .green {
-    color: green;
-  }
-  
+}

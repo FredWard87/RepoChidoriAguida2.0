@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, FormControl, Form, Modal, Card, Col, Row } from 'react-bootstrap';
+import { Button, FormControl, Form, Modal, Table } from 'react-bootstrap';
 import Navigation from '../Navigation/Navbar';
 import './css/depa.css';
 
@@ -35,7 +35,6 @@ const AreasTrabajo = () => {
   const [valoresAreaSeleccionada, setValoresAreaSeleccionada] = useState({ departamento: '', areas: '' });
   const [mostrarModalActualizar, setMostrarModalActualizar] = useState(false);
   const [filtroArea, setFiltroArea] = useState('');
-  const [expandedArea] = useState(null);
 
   useEffect(() => {
     const fetchAreas = async () => {
@@ -161,44 +160,46 @@ const AreasTrabajo = () => {
             placeholder="Filtrar Departamentos"
             value={filtroArea}
             onChange={(e) => setFiltroArea(e.target.value)}
+            className="filtro"
           />
         </div>
-        <Row xs={1} md={4} lg={5} className="g-4"> {/* Aquí defines que habrá 4 columnas en dispositivos extra pequeños (xs), 4 columnas en dispositivos medianos (md) y 5 columnas en dispositivos grandes (lg) */}
-          {areas
-            .filter((area) =>
-              area.departamento.toLowerCase().includes(filtroArea.toLowerCase())
-            )
-            .map((area) => (
-              <Col key={area._id}>
-                <Card className="h-100">
-                  <Card.Body>
-                    <Card.Title>{area.departamento}</Card.Title>
-                    <Card.Text>
-                      <strong>Áreas:</strong> {area.areas.join(', ')}
-                    </Card.Text>
+        <Table striped bordered hover>
+          <thead>
+            <tr>
+              <th>Departamento</th>
+              <th>Áreas</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {areas
+              .filter((area) =>
+                area.departamento.toLowerCase().includes(filtroArea.toLowerCase())
+              )
+              .map((area) => (
+                <tr key={area._id}>
+                  <td>{area.departamento}</td>
+                  <td>{area.areas.join(', ')}</td>
+                  <td>
                     <Button
                       variant="warning"
                       onClick={() => abrirModalActualizar(area._id)}
+                      className="button"
                     >
                       Actualizar
-                    </Button>{' '}
+                    </Button>
                     <Button
                       variant="danger"
                       onClick={() => eliminarArea(area._id)}
+                      className="button"
                     >
                       Eliminar
                     </Button>
-                   
-                    {expandedArea === area._id && (
-                      <Card.Text>
-                        <strong>Descripción:</strong> {area.descripcion}
-                      </Card.Text>
-                    )}
-                  </Card.Body>
-                </Card>
-              </Col>
-            ))}
-        </Row>
+                  </td>
+                </tr>
+              ))}
+          </tbody>
+        </Table>
       </div>
       <Modal show={mostrarFormularioArea} onHide={() => setMostrarFormularioArea(false)}>
         <Modal.Header closeButton>

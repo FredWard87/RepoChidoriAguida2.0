@@ -8,7 +8,7 @@ import RegistroUsuarioModal from './RegistroUsuarioModal';
 import CalificacionModal from './CalificacionModal';
 
 const UsuariosRegistro = () => {
-  
+
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -23,7 +23,6 @@ const UsuariosRegistro = () => {
     Puesto: '',
     FechaIngreso: '',
     Escolaridad: '',
-    Carrera:'',
     Departamento:'',
     AñosExperiencia: '',
     FormaParteEquipoInocuidad: false,
@@ -323,7 +322,6 @@ const UsuariosRegistro = () => {
                   />
                 </div>
 
-                
 
                 {(usuarioAEditar.TipoUsuario === 'auditor' || usuarioAEditar.TipoUsuario === 'Administrador' || usuarioAEditar.TipoUsuario === 'empleado') && (
                   <>
