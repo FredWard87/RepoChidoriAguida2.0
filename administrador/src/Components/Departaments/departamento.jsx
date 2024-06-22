@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Button, FormControl, Form, Modal, Table } from 'react-bootstrap';
 import Navigation from '../Navigation/Navbar';
 import './css/depa.css';
+import './css/areaModals.css'; // Nueva hoja de estilos para los modales
 
-const AreaForm = ({ nuevaArea, handleInputChange, agregarArea }) => (
+const AreaForm = ({ nuevaArea, handleInputChange, handleAreaChange, areasInput, agregarAreaInput, eliminarAreaInput }) => (
   <Form>
     <Form.Group controlId="formDepartamento">
       <Form.Label>Departamento</Form.Label>
@@ -16,25 +17,33 @@ const AreaForm = ({ nuevaArea, handleInputChange, agregarArea }) => (
     </Form.Group>
     <Form.Group controlId="formAreas">
       <Form.Label>Áreas</Form.Label>
-      <FormControl
-        type="text"
-        name="areas"
-        value={nuevaArea.areas}
-        onChange={handleInputChange}
-        placeholder="Separar áreas con comas"
-      />
+      {areasInput.map((area, index) => (
+        <div key={index} className="area-input-group">
+          <FormControl
+            type="text"
+            name={`area-${index}`}
+            value={area}
+            onChange={(e) => handleAreaChange(e, index)}
+            placeholder={`Área ${index + 1}`}
+            className="mb-2"
+          />
+          <Button variant="danger" onClick={() => eliminarAreaInput(index)}>Eliminar Área</Button>
+        </div>
+      ))}
+      <Button variant="secondary" onClick={agregarAreaInput}>Agregar otra área</Button>
     </Form.Group>
   </Form>
 );
 
 const AreasTrabajo = () => {
   const [areas, setAreas] = useState([]);
-  const [nuevaArea, setNuevaArea] = useState({ departamento: '', areas: '' });
+  const [nuevaArea, setNuevaArea] = useState({ departamento: '', areas: [] });
   const [mostrarFormularioArea, setMostrarFormularioArea] = useState(false);
   const [areaSeleccionadaId, setAreaSeleccionadaId] = useState(null);
-  const [valoresAreaSeleccionada, setValoresAreaSeleccionada] = useState({ departamento: '', areas: '' });
+  const [valoresAreaSeleccionada, setValoresAreaSeleccionada] = useState({ departamento: '', areas: [] });
   const [mostrarModalActualizar, setMostrarModalActualizar] = useState(false);
   const [filtroArea, setFiltroArea] = useState('');
+  const [areasInput, setAreasInput] = useState(['']); // Inicializa con un área
 
   useEffect(() => {
     const fetchAreas = async () => {
@@ -61,6 +70,22 @@ const AreasTrabajo = () => {
     }));
   };
 
+  const handleAreaChange = (event, index) => {
+    const newAreas = [...areasInput];
+    newAreas[index] = event.target.value;
+    setAreasInput(newAreas);
+  };
+
+  const agregarAreaInput = () => {
+    setAreasInput([...areasInput, '']);
+  };
+
+  const eliminarAreaInput = (index) => {
+    const newAreas = [...areasInput];
+    newAreas.splice(index, 1);
+    setAreasInput(newAreas);
+  };
+
   const agregarArea = async () => {
     try {
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/areas`, {
@@ -70,7 +95,7 @@ const AreasTrabajo = () => {
         },
         body: JSON.stringify({
           ...nuevaArea,
-          areas: nuevaArea.areas.split(',').map(area => area.trim())
+          areas: areasInput.filter(area => area.trim() !== '') // Eliminar áreas vacías
         }),
       });
 
@@ -80,7 +105,8 @@ const AreasTrabajo = () => {
 
       const data = await response.json();
       setAreas([...areas, data]);
-      setNuevaArea({ departamento: '', areas: '' });
+      setNuevaArea({ departamento: '', areas: [] });
+      setAreasInput(['']); // Reinicia el área input
       setMostrarFormularioArea(false);
     } catch (error) {
       console.error('Error al agregar el área:', error);
@@ -124,7 +150,7 @@ const AreasTrabajo = () => {
           },
           body: JSON.stringify({
             ...valoresAreaSeleccionada,
-            areas: valoresAreaSeleccionada.areas.split(',').map(area => area.trim())
+            areas: valoresAreaSeleccionada.areas.filter(area => area.trim() !== '') // Eliminar áreas vacías
           }),
         }
       );
@@ -163,7 +189,7 @@ const AreasTrabajo = () => {
             className="filtro"
           />
         </div>
-        <Table striped bordered hover>
+        <Table striped bordered hover responsive>
           <thead>
             <tr>
               <th>Departamento</th>
@@ -201,18 +227,22 @@ const AreasTrabajo = () => {
           </tbody>
         </Table>
       </div>
-      <Modal show={mostrarFormularioArea} onHide={() => setMostrarFormularioArea(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Agregar Departamento</Modal.Title>
+      <Modal show={mostrarFormularioArea} onHide={() => setMostrarFormularioArea(false)} className="custom-modal">
+        <Modal.Header closeButton className="custom-modal-header">
+          <Modal.Title className="custom-modal-title">Agregar Departamento</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body className="custom-modal-body">
           <AreaForm
             nuevaArea={nuevaArea}
             handleInputChange={handleInputChange}
             agregarArea={agregarArea}
+            handleAreaChange={handleAreaChange}
+            areasInput={areasInput}
+            agregarAreaInput={agregarAreaInput} // Pasar la función aquí
+            eliminarAreaInput={eliminarAreaInput} // Pasar la función aquí
           />
         </Modal.Body>
-        <Modal.Footer>
+        <Modal.Footer className="custom-modal-footer">
           <Button variant="secondary" onClick={() => setMostrarFormularioArea(false)}>
             Cancelar
           </Button>
@@ -222,11 +252,11 @@ const AreasTrabajo = () => {
         </Modal.Footer>
       </Modal>
 
-      <Modal show={mostrarModalActualizar} onHide={cerrarModalActualizar}>
-        <Modal.Header closeButton>
-          <Modal.Title>Actualizar Departamento</Modal.Title>
+      <Modal show={mostrarModalActualizar} onHide={cerrarModalActualizar} className="custom-modal">
+        <Modal.Header closeButton className="custom-modal-header">
+          <Modal.Title className="custom-modal-title">Actualizar Departamento</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body className="custom-modal-body">
           <Form>
             <Form.Group controlId="formActualizarDepartamento">
               <Form.Label>Departamento</Form.Label>
@@ -244,21 +274,48 @@ const AreasTrabajo = () => {
             </Form.Group>
             <Form.Group controlId="formActualizarAreas">
               <Form.Label>Áreas</Form.Label>
-              <FormControl
-                type="text"
-                name="areas"
-                value={valoresAreaSeleccionada.areas}
-                onChange={(e) =>
+              {valoresAreaSeleccionada.areas.map((area, index) => (
+                <div key={index} className="area-input-group">
+                  <FormControl
+                    type="text"
+                    name={`area-${index}`}
+                    value={area}
+                    onChange={(e) => {
+                      const newAreas = [...valoresAreaSeleccionada.areas];
+                      newAreas[index] = e.target.value;
+                      setValoresAreaSeleccionada({
+                        ...valoresAreaSeleccionada,
+                        areas: newAreas,
+                      });
+                    }}
+                    placeholder={`Área ${index + 1}`}
+                    className="mb-2"
+                  />
+                  <Button variant="danger" onClick={() => {
+                    const newAreas = [...valoresAreaSeleccionada.areas];
+                    newAreas.splice(index, 1);
+                    setValoresAreaSeleccionada({
+                      ...valoresAreaSeleccionada,
+                      areas: newAreas,
+                    });
+                  }}>Eliminar Área</Button>
+                </div>
+              ))}
+              <Button
+                variant="secondary"
+                onClick={() =>
                   setValoresAreaSeleccionada({
                     ...valoresAreaSeleccionada,
-                    areas: e.target.value,
+                    areas: [...valoresAreaSeleccionada.areas, ''],
                   })
                 }
-              />
+              >
+                Agregar otra área
+              </Button>
             </Form.Group>
           </Form>
         </Modal.Body>
-        <Modal.Footer>
+        <Modal.Footer className="custom-modal-footer">
           <Button variant="secondary" onClick={cerrarModalActualizar}>
             Cancelar
           </Button>

@@ -67,7 +67,8 @@ body {
   padding: 15px;
 }
 
-.modal-header {
+.modal-personalizado .modal-header,
+.modal-actualizar .modal-header {
   background-color: #28a745;
   color: #fff;
 }
