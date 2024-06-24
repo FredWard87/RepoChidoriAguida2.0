@@ -99,28 +99,11 @@ const cargaMasiva = async (req, res) => {
   }
 };
 
-const editarPrograma = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { Descripcion } = req.body;
-    const programaActualizado = await Programas.findByIdAndUpdate(
-      id,
-      { Descripcion },
-      { new: true }
-    );
-    if (!programaActualizado) {
-      return res.status(404).json({ error: 'Programa no encontrado' });
-    }
-    res.status(200).json(programaActualizado);
-  } catch (error) {
-    console.error('Error al actualizar programa:', error);
-    res.status(500).json({ error: 'Error interno del servidor' });
-  }
-};
+
+
 
 module.exports = {
   obtenerProgramas,
   crearPrograma,
   cargaMasiva,
-  editarPrograma, // Exportar la nueva función
 };

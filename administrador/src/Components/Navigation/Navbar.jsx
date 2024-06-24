@@ -91,7 +91,6 @@ function DrawerList({ handleLogout }) {
     {
       text: "Calendarios",
       subItems: [
-        { text: "Calendario General", href: "/" },
         { text: "Calendario de Auditorias", href: "/calendario" },
         { text: "Historial de Auditorias", href: "/auditcalendar" }
       ],

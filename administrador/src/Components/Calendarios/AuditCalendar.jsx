@@ -25,7 +25,8 @@ const AuditCalendar = () => {
     auditorLider: '',
     tipoAuditoria: '',
     departamento: '',
-    aceptibilidad: '' // Añadimos el nuevo filtro
+    aceptibilidad: '',
+    year: ''
   });
 
   useEffect(() => {
@@ -54,11 +55,13 @@ const AuditCalendar = () => {
   const getFilteredAudits = () => {
     return selectedAudits.filter(audit => {
       const acceptability = getAcceptability(audit.PorcentajeTotal);
+      const year = new Date(audit.FechaInicio).getFullYear().toString();
       return (
         (filters.auditorLider === '' || audit.AuditorLider === filters.auditorLider) &&
         (filters.tipoAuditoria === '' || audit.TipoAuditoria === filters.tipoAuditoria) &&
         (filters.departamento === '' || audit.Departamento === filters.departamento) &&
-        (filters.aceptibilidad === '' || acceptability === filters.aceptibilidad)
+        (filters.aceptibilidad === '' || acceptability === filters.aceptibilidad) &&
+        (filters.year === '' || year === filters.year)
       );
     });
   };
@@ -73,6 +76,37 @@ const AuditCalendar = () => {
     } else {
       return 'Excelente';
     }
+  };
+
+  const getAveragePercentageByYear = () => {
+    const auditsByYear = {};
+    selectedAudits.forEach(audit => {
+      const year = new Date(audit.FechaInicio).getFullYear();
+      if (!auditsByYear[year]) {
+        auditsByYear[year] = { totalPercentage: 0, count: 0 };
+      }
+      auditsByYear[year].totalPercentage += parseFloat(audit.PorcentajeTotal);
+      auditsByYear[year].count += 1;
+    });
+
+    const averagePercentages = Object.keys(auditsByYear).map(year => {
+      const { totalPercentage, count } = auditsByYear[year];
+      return { year, averagePercentage: totalPercentage / count };
+    });
+
+    return averagePercentages;
+  };
+
+  const getClassByPercentage = (percentage) => {
+    if (percentage < 70) return 'red';
+    if (percentage < 80) return 'orange';
+    if (percentage < 90) return 'yellow';
+    return 'green';
+  };
+
+  const getYears = () => {
+    const years = [...new Set(auditorias.map(audit => new Date(audit.FechaInicio).getFullYear().toString()))];
+    return years.sort();
   };
 
   return (
@@ -90,7 +124,7 @@ const AuditCalendar = () => {
         {/* Filtros */}
         <Box className="filters-container">
           <Grid container spacing={3}>
-            <Grid item xs={12} sm={3}>
+            <Grid item xs={12} sm={2.4}>
               <FormControl variant="outlined" fullWidth>
                 <InputLabel>Auditor Líder</InputLabel>
                 <Select
@@ -108,7 +142,7 @@ const AuditCalendar = () => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12} sm={3}>
+            <Grid item xs={12} sm={2.4}>
               <FormControl variant="outlined" fullWidth>
                 <InputLabel>Tipo de Auditoría</InputLabel>
                 <Select
@@ -126,7 +160,7 @@ const AuditCalendar = () => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12} sm={3}>
+            <Grid item xs={12} sm={2.4}>
               <FormControl variant="outlined" fullWidth>
                 <InputLabel>Departamento</InputLabel>
                 <Select
@@ -147,7 +181,7 @@ const AuditCalendar = () => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12} sm={3}>
+            <Grid item xs={12} sm={2.4}>
               <FormControl variant="outlined" fullWidth>
                 <InputLabel>Aceptibilidad</InputLabel>
                 <Select
@@ -161,6 +195,24 @@ const AuditCalendar = () => {
                   <MenuItem value="No Aceptable">No Aceptable</MenuItem>
                   <MenuItem value="Aceptable">Aceptable</MenuItem>
                   <MenuItem value="Excelente">Excelente</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={2.4}>
+              <FormControl variant="outlined" fullWidth>
+                <InputLabel>Año</InputLabel>
+                <Select
+                  name="year"
+                  value={filters.year}
+                  onChange={handleFilterChange}
+                  label="Año"
+                >
+                  <MenuItem value="">Todos</MenuItem>
+                  {getYears().map((year, index) => (
+                    <MenuItem key={index} value={year}>
+                      {year}
+                    </MenuItem>
+                  ))}
                 </Select>
               </FormControl>
             </Grid>
@@ -207,6 +259,28 @@ const AuditCalendar = () => {
             ))}
           </TableBody>
         </Table>
+
+        <Box className="average-percentage-container">
+          <Typography variant="h5" gutterBottom>
+            Promedio de Porcentajes por Año
+          </Typography>
+          <Table className="audit-table">
+            <TableHead>
+              <TableRow>
+                <TableCell>Año</TableCell>
+                <TableCell>Promedio de Porcentaje</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {getAveragePercentageByYear().map((data, index) => (
+                <TableRow key={index} className={getClassByPercentage(data.averagePercentage)}>
+                  <TableCell>{data.year}</TableCell>
+                  <TableCell>{data.averagePercentage.toFixed(2)}%</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </Box>
       </Box>
     </Container>
   );

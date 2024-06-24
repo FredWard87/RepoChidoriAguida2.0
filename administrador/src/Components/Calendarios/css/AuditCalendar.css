@@ -9,28 +9,24 @@
   width: 100%;
   overflow-x: auto;
 }
+
 .filters-container {
   display: flex;
   gap: 20px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap; /* Prevent wrapping to a new line */
   margin-bottom: 20px;
+  overflow-x: auto; /* Allow horizontal scrolling if necessary */
 }
 
 .filters-container .MuiFormControl-root {
-  background-color: #e0e0e0; /* Color de fondo para los filtros */
-  border-radius: 5px; /* Bordes redondeados */
+  background-color: #e0e0e0; /* Background color for filters */
+  border-radius: 5px; /* Rounded corners */
 }
 
-/* Agrega un poco de margen entre los filtros */
+/* Add some margin between the filters */
 .filter-control {
   min-width: 200px;
   margin: 5px;
-}
-
-
-
-.filter-control {
-  min-width: 200px;
 }
 
 .audit-table {
@@ -73,22 +69,26 @@
 }
 
 .red {
-  background-color: #ffcccc; /* Fondo rojo claro */
+  background-color: #ffcccc; /* Light red background */
   color: red;
 }
 
-.orange {
-  background-color: #ffe0b3; /* Fondo naranja claro */
+.orange {  
+  background-color: #ffe0b3; /* Light orange background */
   color: orange;
 }
 
+.yellow {
+  background-color: #ffff99; /* Light yellow background */
+  color: #cccc00; /* Dark yellow color */
+}
+
 .green {
-  background-color: #ccffcc; /* Fondo verde claro */
+  background-color: #ccffcc; /* Light green background */
   color: green;
 }
 
-
-/* Estilos responsivos */
+/* Responsive styles */
 @media (max-width: 768px) {
   .audit-table th,
   .audit-table td {
@@ -99,7 +99,7 @@
     padding: 10px;
   }
   .filters-container .MuiFormControl-root {
-    padding: 5px; /* Ajusta el padding en pantallas pequeñas */
+    padding: 5px; /* Adjust padding on small screens */
   }
 }
 
@@ -117,6 +117,6 @@
     margin-top: 10px;
   }
   .filters-container .MuiFormControl-root {
-    padding: 5px; /* Ajusta el padding en pantallas pequeñas */
+    padding: 5px; /* Adjust padding on small screens */
   }
 }
