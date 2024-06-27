@@ -79,11 +79,11 @@ function DrawerList({ handleLogout }) {
     { text: "Usuarios", href: "/usuariosRegistrados" },
     { text: "Programa", href: "/programa" },
     {
-      text: "Auditorias",
+      text: "Auditorías",
       subItems: [
-        { text: "Generar auditoria", href: "/datos" },
-        { text: "Revicion de auditoria", href: "/revicion" },
-        { text: "Auditorias terminadas", href: "/" }
+        { text: "Generar auditoría", href: "/datos" },
+        { text: "Revisión de auditoría", href: "/revicion" },
+        { text: "Auditorías terminadas", href: "/" }
       ],
       showSubmenu: showAuditoriasSubmenu,
       toggleSubmenu: toggleAuditoriasSubmenu

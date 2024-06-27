@@ -73,7 +73,6 @@ function DrawerList({ handleLogout }) {
       text: "Auditorias", subItems: [
         { text: "Pendiente", href: "/pendiente" },
         { text: "Finalizada", href: "/reporte" },
-        { text: "Ishikawa", href: "/" }
       ]
     }
     ];
